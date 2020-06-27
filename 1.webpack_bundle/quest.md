@@ -22,4 +22,4 @@ moduleId 不应该是绝对路径么？相对路径
 188\*\*\*\*3750
 那老师 你刚才执行 build 不也是 开发模式下 build
 
-如果你得到一个模 块,但你不知道它是个 common.js esmodule,如何取值
+如果你得到一个模 块,但你不知道它是个 common.js esmodule,如何取值?
