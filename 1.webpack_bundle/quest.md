@@ -37,3 +37,119 @@ kevin
 webpack 是不是要被 vite 替代了啊
 舍得
 老师发的代码库地址 没访问权限啊
+
+common.js 加载 common.js
+
+```js
+{
+  "./src/index.js": function (module, exports, require) {
+    let title = require(/*! ./title */ "./src/title.js");
+    console.log(title.name);
+    console.log(title.age);
+  },
+
+  "./src/title.js": function (module, exports) {
+    exports.name = "title_name";
+    exports.age = "title_age";
+  },
+}
+```
+
+common.js 加载 es6
+
+```js
+{
+  "./src/index.js": function (module, exports, require) {
+    let title = require("./src/title.js");
+    console.log(title.default);
+    console.log(title.age);
+  },
+
+  "./src/title.js": function (module, exports, require) {
+    //先表明这是一个es6模块
+    require.r(exports);//exports.__esModule=true
+    //给exports增加一个age属性,值 title_age
+    require.d(exports, "age", function () {
+      return age;
+    });
+    //默认导出如何兼容 是往导出对象上挂载一个default属性
+    exports["default"] = "title_name"; //默认导出
+    const age = "title_age"; //单个导出age
+  }
+```
+
+//es6 加载 es6
+
+```js
+{
+  "./src/index.js": function (module, exports, require) {
+    require.r(exports);// exports.__esModule =true;
+    var title = require("./src/title.js");
+    console.log(title["default"]);
+    console.log(title["age"]);
+  },
+
+  "./src/title.js": function (module, exports, require) {
+    require.r(exports);//exports.__esModule =true;
+    require.d(exports, "age", function () {//exports.age = 'title_age';
+      return age;
+    });
+    exports["default"] = "title_name";
+    const age = "title_age";
+  },
+}
+```
+
+es6 加载 common.js
+
+```js
+__webpack_require__.n = function (module) {
+  var getter =
+    module && module.__esModule
+      ? function getDefault() {
+          return module["default"];
+        }
+      : function getModuleExports() {
+          return module;
+        };
+  __webpack_require__.d(getter, "a", getter);
+  return getter;
+};
+```
+
+```js
+ {
+    "./src/index.js": function (module,exports,require ) {
+      require.r(exports);//exports.__esModule = true
+      var title = require("./src/title.js");
+      var title_default = require.n(title);
+    /*   function getModuleExports() {
+        return  {
+            name: "title_name",
+            age: "title_age",
+        };
+      } */
+      //getModuleExports.a getter getModuleExports
+      console.log(title_default.a);//{name: "title_name",age: "title_age",};
+      console.log(title["age"]);
+    },
+
+    "./src/title.js": function (module, exports) {
+      module.exports = {
+        name: "title_name",
+        age: "title_age",
+      };
+    },
+  }
+```
+
+- 1.如果模块是用 common.js 写入,则不需要做任何的转换
+- 2. 如果模块里有 export 或者 import 或者 都有
+  - require.r(exports);//exports.\*\*esModule = true 此模块的导出对象上增加一个\_\_esModule 属性
+  - 如果有默认导入的话 `require.n(title)`得到默认导入 title_default.a 就是默认导入了
+  - 如果是批量导的话,直接 取属性就可以了
+
+webpack 有三个核心 概念
+
+- 模块 JS 文件 CSS 文件 图片
+- 相互依赖的模块会合并成一个代码块

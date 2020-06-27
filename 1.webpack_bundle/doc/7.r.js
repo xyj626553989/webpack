@@ -18,3 +18,4 @@ let obj = { name: "zhufeng" };
 require.r2(obj);
 console.log(Object.prototype.toString.call(obj)); //[object Module]
 console.log(obj);
+//fdfdfdfdfdfd
