@@ -81,24 +81,54 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/main.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/index.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/main.js":
-/*!*********************!*\
-  !*** ./src/main.js ***!
-  \*********************/
+/***/ "./src/index.js":
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var fun = function fun() {
-  console.log('main');
-};
+var url = __webpack_require__(/*! ./logo.png */ "./src/logo.png");
+
+console.log(url);
+var img = new Image();
+img.src = url;
+document.body.appendChild(img);
+
+__webpack_require__(/*! ./title */ "./src/title.js"); //import {Button} from 'antd';
+//babel转换的时候可以把这一行转成
+//import Button from 'antd/button';
+
+/***/ }),
+
+/***/ "./src/logo.png":
+/*!**********************!*\
+  !*** ./src/logo.png ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = images/d9c8750bed0b3c7d089fa7d55720d6cf.png
+
+/***/ }),
+
+/***/ "./src/title.js":
+/*!**********************!*\
+  !*** ./src/title.js ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 /***/ })
 

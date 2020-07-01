@@ -1,14 +1,10 @@
-let importBtn = document.getElementById("import");
-importBtn.addEventListener("click", () => {
-  //result就是这个title模块的导出对象了
-  import(/* webpackChunkName: "title" */ "./title").then((result) => {
-    console.log(result);
-  });
-  import(/* webpackChunkName: "title" */ "./title").then((result) => {
-    console.log(result);
-  });
-});
+let url = require('./logo.png');
+console.log(url);
+let img = new Image();
+img.src = url;
+document.body.appendChild(img);
+require('./title');
 
-//import('./title')
-
-//require.e("title").then(require.t.bind(null, "./src/title.js", 7));
+//import {Button} from 'antd';
+//babel转换的时候可以把这一行转成
+//import Button from 'antd/button';
