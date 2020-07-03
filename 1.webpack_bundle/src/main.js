@@ -1,3 +1,1 @@
-let fun = ()=>{
-    console.log('main');
-}
+import './main.less'

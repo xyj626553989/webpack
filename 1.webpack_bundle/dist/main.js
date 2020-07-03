@@ -96,10 +96,24 @@
 "use strict";
 
 
-var fun = function fun() {
-  console.log('main');
-};
+__webpack_require__(/*! ./main.less */ "./src/main.less");
+
+/***/ }),
+
+/***/ "./src/main.less":
+/*!***********************!*\
+  !*** ./src/main.less ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+
+     let style = document.createElement('style');
+     style.innerHTML = "#root {\n  color: red;\n}\n";
+     document.head.appendChild(style);
+   
 
 /***/ })
 
 /******/ });
+//# sourceMappingURL=main.js.map

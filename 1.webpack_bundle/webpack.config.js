@@ -3,11 +3,8 @@ const path = require("path"); //处理路径的
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
   mode: "development", //development不压缩代码 production 会进行压缩
-  devtool: "none", //不需开发的source-map文件
-  entry: {
-    main: "./src/main.js",
-    index: "./src/index.js"
-  }, //入口模 块
+  devtool: "source-map", //不需开发的source-map文件
+  entry: "./src/main.js", //入口模 块
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "[name].js",
@@ -22,8 +19,10 @@ module.exports = {
   },
   //配置如何查找普通模块
   resolve:{
-    alias:{},
-    modules:[]
+    alias:{
+      'file-loader2':path.resolve(__dirname,'loaders','file-loader2.js')
+    },
+    modules:[path.resolve(__dirname,'loaders'),path.resolve(__dirname,'node_modules')]
   },
   //此处配置模块
   module: {
@@ -34,7 +33,6 @@ module.exports = {
         //如果你要加载的模块ID是以.js结尾的,我就会把此模块先从硬盘上读出来,传递给babel-loader
         use:[
           //path.resolve(__dirname,'loaders','babel-loader.js')
-          'babel-loader2',
           'babel-loader'
         ]
       },
@@ -43,11 +41,27 @@ module.exports = {
         //如果你要加载的模块ID是以.js结尾的,我就会把此模块先从硬盘上读出来,传递给babel-loader
         use:[
           {
-            loader:'file-loader',
+            loader:'url-loader',
             options:{
-              filename:'images/[hash].[ext]'
+              filename:'[hash].[ext]',
+              limit:8*1024
+              //如果文件的字节数小于64的话,就不拷贝文件了,直接base64
             }
           }
+        ]
+      },
+      {
+        test:/\.less$/,
+        use:[
+          "style-loader",//把css变成style标签插入页面中
+          {
+           loader:'css-loader',
+          options:{
+           
+          }
+          },
+          //"css-loader",//处理CSS中的@import url('./bg.png')
+          "less-loader"//可以把less编译成css
         ]
       }
     ]
