@@ -1,6 +1,7 @@
 
-function loader(source){
+function loader(source,sourceMap){
   console.log('loader-a',this.data);
+  console.log('loader-a sourceMap',sourceMap);
   return source+"//loder-a";
 }
 

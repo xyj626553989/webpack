@@ -18,7 +18,17 @@ function runLoaders(options,callback){
     //loaderContext.readResource = fs.readFile;
     loaderContext.resource = resource;
     loaderContext.loaders = loaders;
-    
+    let isSync = true;//默认是同步的
+    //如果调用它就表示 当前的异步loader执行结束了,要执行下一个loader
+    let innerCallback = loaderContext.callback= function(err,args){
+        isSync=true;
+        loaderContext.loaderIndex--;
+        iterateNormalLoaders(loaderContext,args,callback);
+    }
+    loaderContext.async = function(){
+        isSync = false;//如果调用了async方法,会把状态标识从同步变成异步
+        return innerCallback;
+    }
     Object.defineProperty(loaderContext,'request',{
         get:function(){//loaders+resource用!连接
             return loaderContext.loaders.map(o=>o.request).concat(loaderContext.resource).join('!')
@@ -68,8 +78,10 @@ function runLoaders(options,callback){
             }
         }
         args = loaderFn.apply(loaderContext,[args]);
-        loaderContext.loaderIndex--;
-        iterateNormalLoaders(loaderContext,args,callback);
+        if(isSync){
+            loaderContext.loaderIndex--;
+            iterateNormalLoaders(loaderContext,args,callback);
+        }
     }
     function iteratePitchingLoaders(loaderContext,callback){
         if(loaderContext.loaderIndex >= loaderContext.loaders.length){
