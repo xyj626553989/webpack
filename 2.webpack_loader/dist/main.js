@@ -86,17 +86,6 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./loaders/less-loader.js!./src/main.less":
-/*!************************************************!*\
-  !*** ./loaders/less-loader.js!./src/main.less ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports="#root {\n  color: red;\n}\n"
-
-/***/ }),
-
 /***/ "./src/main.js":
 /*!*********************!*\
   !*** ./src/main.js ***!
@@ -121,7 +110,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
       let style = document.createElement('style');
-      style.innerHTML = __webpack_require__( "./loaders/less-loader.js!./src/main.less");
+      //style.innerHTML = require("!!../loaders/less-loader.js!./main.less");
+      style.innerHTML = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module '!!./loaders/less-loader.js!./src/main.less'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
       document.head.appendChild(style);
     
 

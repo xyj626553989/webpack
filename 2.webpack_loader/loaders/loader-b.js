@@ -1,5 +1,6 @@
 
 function loader(source){
+  
   console.log('loader-b',this.data);
   return source+"//loder-b";
 }

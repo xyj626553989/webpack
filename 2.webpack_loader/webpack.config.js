@@ -62,9 +62,14 @@ module.exports = {
       {
         test:/\.less$/,
         use:[
-          "style-loader",//把css变成style标签插入页面中
-          //"css-loader",//处理CSS中的@import url('./bg.png')
           "less-loader"//可以把less编译成css
+        ]
+      },
+      {
+        test:/\.less$/,
+        enforce:'post',
+        use:[
+          "style-loader"
         ]
       }
     ]

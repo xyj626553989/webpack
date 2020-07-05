@@ -1,5 +1,6 @@
 let path = require('path');
 let fs = require('fs');
+const loader = require('./loaders/loader-c');
 
 //loader 绝对路径
 function createLoaderObject(loader){
@@ -9,7 +10,7 @@ function createLoaderObject(loader){
   loaderObject.pitch = loaderObject.normal.pitch;
   return loaderObject;
 }
-function runLoaders(options,finishCallback){
+function runLoaders(options,callback){
     let loaderContext = {};//默认是一个空对象
     let {resource,loaders}=options;
     loaders=loaders.map(createLoaderObject);
@@ -38,14 +39,37 @@ function runLoaders(options,finishCallback){
             return loaderContext.loaders.slice(0,loaderContext.loaderIndex).map(o=>o.request).concat(loaderContext.resource).join('!')
         }
     });
+    Object.defineProperty(loaderContext,'data',{
+        get:function(){//当前索引一直到最后
+            return loaderContext.loaders[loaderContext.loaderIndex].data;
+        }
+    });
 
-    iteratePitchingLoaders(loaderContext,finishCallback);
+    iteratePitchingLoaders(loaderContext,callback);
 
     function processResource(loaderContext,callback){
-        let buffer = fs.readFileSync(loaderContext.resource,'utf8');
-        console.log('buffer',buffer);
-        
-        //iterateNormalLoaders(loaderContext,buffer,callback);
+        //读文件的时候没有指定编码,那么buffer就是一个Buffer的实例
+        let buffer = fs.readFileSync(loaderContext.resource);
+        iterateNormalLoaders(loaderContext,buffer,callback);
+    }
+    function iterateNormalLoaders(loaderContext,args,callback){
+        if(loaderContext.loaderIndex<0){//如果索引已经小于0了,则就结束
+            return callback(null,args);
+        }
+        let currrentLoaderObject = loaderContext.loaders[loaderContext.loaderIndex];
+        let loaderFn = currrentLoaderObject.normal;
+        if(loaderFn.raw){//如果说loaderFn.raw为true
+            if(!Buffer.isBuffer(args)){//如果需要buffer,但是不不是buffer,转成buffer
+                args= Buffer.from(args);
+            }
+        }else{//需要要字符串
+            if(Buffer.isBuffer(args)){
+                args= args.toString('utf8');
+            }
+        }
+        args = loaderFn.apply(loaderContext,[args]);
+        loaderContext.loaderIndex--;
+        iterateNormalLoaders(loaderContext,args,callback);
     }
     function iteratePitchingLoaders(loaderContext,callback){
         if(loaderContext.loaderIndex >= loaderContext.loaders.length){
@@ -65,7 +89,7 @@ function runLoaders(options,finishCallback){
             currrentLoaderObject.data]);
         if(args){//如果pitch有返回值的话
             loaderContext.loaderIndex--;
-            //return iterateNormalLoaders(loaderContext,args,callback);
+            return iterateNormalLoaders(loaderContext,args,callback);
         }else{//如果没有返回值,要执行下一个loader的pitch
             loaderContext.loaderIndex++;
             iteratePitchingLoaders(loaderContext,callback);
@@ -84,3 +108,21 @@ let options = {
 runLoaders(options,(err,result)=>{
    console.log('result',result);
 });
+
+/**
+ * 一个模块可能会有多种类型的loader
+ * post inline auto(normal) pre
+ * [post,inline,auto,pre]
+ * 
+ */
+/**
+ * 1.raw 如果raw=true loader得到buffer,raw=false就得到字符串
+ * 2. this.data 哪来的? loaderContext.data
+ * 3.异步如何处理,以后如果返回多个参数?
+ * 
+ * .js
+ * eslint pre 
+ * 普通的不用说了
+ * inline
+ * post 后置 统计一些编译信息
+ */
