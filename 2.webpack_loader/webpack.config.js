@@ -60,16 +60,10 @@ module.exports = {
         ]
       },
       {
-        test:/\.less$/,
+        test:/\.css$/,
         use:[
-          "less-loader"//可以把less编译成css
-        ]
-      },
-      {
-        test:/\.less$/,
-        enforce:'post',
-        use:[
-          "style-loader"
+          "style-loader",
+          "css-loader"
         ]
       }
     ]

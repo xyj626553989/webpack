@@ -1,1 +1,1 @@
-import './main.less';
+require('./style.css');

@@ -20,8 +20,8 @@ loader.pitch = function(remainingRequest,previousRequest,data){
     //因为
     let script = `
       let style = document.createElement('style');
-      //style.innerHTML = require(${stringifyRequest(this,"!!"+remainingRequest)});
-      style.innerHTML = require("!!./loaders/less-loader.js!./src/main.less");
+      style.innerHTML = require(${stringifyRequest(this,"!!"+remainingRequest)});
+      //style.innerHTML = require("!!./loaders/css-loader.js!./src/main.less");
       document.head.appendChild(style);
     `;
     return script;
